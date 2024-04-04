@@ -70,11 +70,15 @@ function! projectroot#exe(args)
   endtry
 endfunction
 
+function! projectroot#rep(content)
+  return tolower(substitute(a:content, '/', '\', 'g'))
+endfunction
+
 " projectroot#buffers([file]): returns all buffers from the same project {{{1
 function! projectroot#buffers(...)
-  let root = projectroot#guess(s:getfullname(a:0 ? a:1 : ''))
-  let bufs = map(s:getallbuffers(), 'fnamemodify(bufname(v:val),":p")')
-  let bufs = filter(bufs, 'stridx(v:val,root)==0 && filereadable(v:val)')
+  let root = trim(projectroot#rep(projectroot#guess(s:getfullname(a:0 ? a:1 : ''))), '\')
+  let bufs = map(s:getallbuffers(), 'projectroot#rep(fnamemodify(bufname(v:val),":p"))')
+  let bufs = filter(bufs, 'stridx(v:val,root.."\\")==0 && filereadable(v:val)')
   return sort(bufs)
 endfunction
 
