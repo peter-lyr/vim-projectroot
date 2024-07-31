@@ -22,20 +22,20 @@ function! projectroot#get(...)
     endif
     return '' " skip any fugitive buffers early
   endif
-  for marker in g:rootmarkers
-    let pivot=fullfile
-    while 1
-      let prev=pivot
-      let pivot=fnamemodify(pivot, ':h')
+  let pivot=fullfile
+  while 1
+    let prev=pivot
+    let pivot=fnamemodify(pivot, ':h')
+    for marker in g:rootmarkers
       let fn = pivot.(pivot == '/' ? '' : '/').marker
       if filereadable(fn) || isdirectory(fn)
         return pivot
       endif
-      if pivot==prev
-        break
-      endif
-    endwhile
-  endfor
+    endfor
+    if pivot==prev
+      break
+    endif
+  endwhile
   return ''
 endfunction
 
